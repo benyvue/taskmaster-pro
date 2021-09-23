@@ -45,46 +45,8 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-$(".list-group").on("click", "p", function() {
-  var text = $(this)
-  .text()
-  .trim();
-  var textInput = $("<textarea>")
-  .addClass("form-control")
-  .val(text);
-  $(this).replaceWith(textInput);
-  textInput.trigger("focus");
-  console.log(this);
-});
 
-$(".list-group").on("blur", "textarea", function() {
-  // get the textarea's current value/text
-  var text = $(this)
-  .val()
-  .trim();
 
-  // get the parent ul's id attribute
-  var status = $(this)
-  .closest(".list-group")
-  .attr("id")
-  .replace("list-", "");
-
-  // get the task's position in the list of other li elements
-  var index = $(this)
-  .closest(".list-group-item")
-  .index();
-
-  tasks[status][index].text = text;
-  saveTasks();
-
-  //recreate p element
-  var taskP = $("<p>")
-    .addClass("m-1")
-    .text(text);
-
-  // replace textarea with p element
-  $(this).replaceWith(taskP);
-});
 
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
@@ -120,17 +82,47 @@ $("#task-form-modal .btn-primary").click(function() {
   }
 });
 
-// remove all tasks
-$("#remove-tasks").on("click", function() {
-  for (var key in tasks) {
-    tasks[key].length = 0;
-    $("#list-" + key).empty();
-  }
-  saveTasks();
+// task text was clicked
+$(".list-group").on("click", "p", function() {
+  var text = $(this)
+  .text()
+  .trim();
+  var textInput = $("<textarea>")
+  .addClass("form-control")
+  .val(text);
+  $(this).replaceWith(textInput);
+  textInput.trigger("focus");
 });
 
-// load tasks for the first time
-loadTasks();
+// replace p element with a new textarea
+$(".list-group").on("blur", "textarea", function() {
+  // get the textarea's current value/text
+  var text = $(this)
+  .val()
+  .trim();
+
+  // get the parent ul's id attribute
+  var status = $(this)
+  .closest(".list-group")
+  .attr("id")
+  .replace("list-", "");
+
+  // get the task's position in the list of other li elements
+  var index = $(this)
+  .closest(".list-group-item")
+  .index();
+
+  tasks[status][index].text = text;
+  saveTasks();
+
+  //recreate p element
+  var taskP = $("<p>")
+    .addClass("m-1")
+    .text(text);
+
+  // replace textarea with p element
+  $(this).replaceWith(taskP);
+});
 
 // due date was clicked
 $(".list-group").on("click", "span", function() {
@@ -175,11 +167,25 @@ $(".list-group").on("blur", "input[type='text']", function() {
   saveTasks();
 
   // recreate span element with bootstrap classes
-  var taskSpan = $("<pan>")
+  var taskSpan = $("<span>")
   .addClass("badge badge-primary badge-pill")
   .text(date);
 
   // replace input with span element
   $(this).replaceWith(taskSpan);
-  console.log(taskSpan);
-})
+});
+
+// remove all tasks
+$("#remove-tasks").on("click", function() {
+  for (var key in tasks) {
+    tasks[key].length = 0;
+    $("#list-" + key).empty();
+  }
+  saveTasks();
+});
+
+// load tasks for the first time
+loadTasks();
+
+
+
